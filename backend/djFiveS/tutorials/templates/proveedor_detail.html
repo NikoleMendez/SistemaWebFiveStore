@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-default">
+    <div class="card-header">
+        <h3 class="card-title">
+            Proveedor: {{ proveedor.nombre }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <p><strong>Nombre:</strong> {{ proveedor.nombre }}</p>
+        <p><strong>Telefono:</strong> {{ proveedor.telefono }}</p>
+        <p><strong>Direccion:</strong> {{ proveedor.direccion }}</p>
+        <p><strong>Email:</strong> {{ proveedor.email }}</p>
+        <a href="{% url 'proveedor_lista' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver a la lista</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Configuración{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Menú lateral -->
+            {% block menu %}
+            {% include 'menu.html' %}
+            {% endblock %}
+        </div>
+        
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0 text-white">Configuración de Código QR</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Formulario para cargar la imagen de QR -->
+                    <form id="qrForm" enctype="multipart/form-data" class="mb-4">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="qr_image" class="form-label">Seleccionar Imagen de QR</label>
+                            <input type="file" id="qr_image" name="qr_image" class="form-control" onchange="cargarImagenQR(event)">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="document.getElementById('qrForm').submit();">Cargar Imagen</button>
+                    </form>
+
+                    <!-- Contenedor para mostrar la imagen de QR cargada -->
+                    <div class="mt-4 text-center" id="qr-image-container" style="display: none;">
+                        <h5>Imagen de QR cargada:</h5>
+                        <div class="d-inline-block border p-3 rounded">
+                            <img id="qrImage" src="{{ request.session.qr_image_url|default:'/static/img/QR.jpg' }}" alt="Código QR" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para manejar la carga de la imagen -->
+<script>
+    function cargarImagenQR(event) {
+        const fileInput = event.target;
+        const formData = new FormData();
+        formData.append('qr_image', fileInput.files[0]);
+
+        // Enviar el archivo al servidor usando fetch
+        fetch("{% url 'cargar_qr' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'  // Asegurar el CSRF token
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Imprime la URL generada en la consola para depuración
+            console.log('URL de la imagen cargada:', data.qr_image_url);
+            
+            // Si hay una URL válida, actualiza el src de la imagen y muestra el contenedor
+            if (data.qr_image_url) {
+                document.getElementById('qrImage').src = data.qr_image_url + '?t=' + new Date().getTime();
+                document.getElementById('qr-image-container').style.display = 'block';
+            }
+        })
+        .catch(error => console.error('Error al cargar la imagen:', error));
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid" style="margin-top: 100px;">
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3">
+      <!-- Menú lateral -->
+      {% block menu %}
+      {% include 'menu.html' %}
+      {% endblock %}
+    </div>
+    <div class="col-md-9" style="margin-top: -70px;">
+        <a href="{% url 'usuario_create' %}" class="btn btn-primary btn-flat">
+          <i class="bi bi-plus"></i> Nuevo Registro
+        </a>
+      <!-- Contenido principal -->
+      <div class="card card-default" style="margin-top: 15px;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="bi bi-people"></i>
+            {{ title }}
+          </h3>
+        </div>
+        <div class="card-body">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Nro</th>
+                <th scope="col">Usuario</th>
+                <th scope="col">Rol</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in usuarios %}
+              <tr>
+                <td>{{ c.id }}</td>
+                <td>{{ c.username }}</td>
+                <td>{{ c.rol.nombre }}</td> <!-- Utiliza el filtro default_if_none para manejar el caso de rol vacío -->
+                <td>
+                  <a href="{% url 'usuario_delete' pk=c.id %}" class="btn btn-danger btn-xs">
+                    <i class="bi bi-trash"></i>
+                  </a>
+                  <a href="{% url 'usuario_detail' pk=c.id %}" class="btn btn-success btn-xs">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

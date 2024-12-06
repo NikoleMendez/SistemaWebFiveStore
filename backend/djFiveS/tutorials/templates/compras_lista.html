@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid" style="margin-top: 10%;">
+  <div class="row">
+    <div class="col-md-3">
+      <!-- Menú lateral -->
+      {% block menu %}
+      {% include 'menu.html' %}
+      {% endblock %}
+    </div>
+    <div class="col-md-9" style="margin-top: -80px; margin-bottom: 20px;">
+        <a href="{% url 'compra_create' %}" class="btn btn-primary btn-flat">
+            <i class="bi bi-plus"></i> Nuevo Registro
+        </a>
+      <!-- Contenido principal -->
+      <div class="card card-default" style="margin-top: 15px;">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="bi bi-cart-check"></i>
+                Lista de Compras
+            </h3>
+        </div>
+    
+        <!-- Contenedor de la tabla con barra deslizadora para más de 10 productos -->
+        <div class="card-body" style="max-height: 500px; overflow-y: auto;"> <!-- Ajustar max-height según el tamaño de las filas -->
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Nro</th>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Proveedor</th>
+                        <th scope="col">Producto</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for compra in compras %}
+                    <tr>
+                        <td>{{ compra.id }}</td>
+                        <td>{{ compra.fecha }}</td>
+                        <td>{{ compra.proveedor.nombre }}</td>
+                        <td>{{ compra.producto.nombre }}</td>
+                        <td>
+                            <a href="{% url 'compra_detail' pk=compra.id %}" class="btn btn-success btn-xs">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'compra_delete' pk=compra.id %}" class="btn btn-danger btn-xs">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

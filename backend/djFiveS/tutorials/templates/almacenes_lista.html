@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid" style="margin-top: 8%;">
+  <div class="row">
+    <div class="col-md-3">
+      {% block menu %}
+      {% include 'menu.html' %}
+      {% endblock %}
+    </div>
+    <div class="col-md-10" style="margin-top: -70px; margin-left: 23%; margin-bottom: 5%;">
+      <div class="card card-default" style="margin-top: 10px;">
+        <div class="card-header">
+          <h3 class="card-title" style="margin-bottom: 3px;">
+            <i class="bi bi-box-seam"></i>
+            Lista de Stock
+          </h3>
+        </div>
+    
+        <div class="card-body">
+          <!-- Campo de búsqueda -->
+          <div class="mb-3">
+            <div class="input-group">
+              <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto..." onkeyup="filterTable()">
+              <button class="btn btn-primary" type="button" onclick="filterTable()">Buscar</button>
+            </div>
+          </div>
+    
+          <!-- Contenedor de la tabla con barra deslizadora -->
+          <div style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-bordered table-striped" id="almacenTable">
+              <thead>
+                <tr>
+                  <th scope="col">Nro</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Código</th>
+                  <th scope="col">Producto</th>
+                  <th scope="col">Categoría</th>
+                  <th scope="col">Cantidad</th>
+                  <th scope="col">Precio Compra</th>
+                  <th scope="col">Precio Venta</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in almacen %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ item.fecha }}</td>
+                  <td>{{ item.producto.cod }}</td> <!-- Mostrar el código aquí -->
+                  <td>{{ item.producto.nombre }}</td>
+                  <td>{{ item.producto.categoria.nombre }}</td>
+                  <td>{{ item.cantidad }}</td>
+                  <td>{{ item.precioc }} Bs</td>
+                  <td>{{ item.preciov }} Bs</td>
+                  <td>
+                    <a href="{% url 'almacen_delete' pk=item.pk %}" class="btn btn-danger btn-xs">
+                      <i class="bi bi-trash"></i>
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script>
+  function filterTable() {
+      // Obtener el valor del campo de búsqueda
+      const input = document.getElementById('searchInput');
+      const filter = input.value.toLowerCase();
+      const table = document.getElementById('almacenTable');
+      const rows = table.getElementsByTagName('tr');
+  
+      // Iterar sobre las filas de la tabla y ocultar las que no coincidan
+      for (let i = 1; i < rows.length; i++) { // Comenzamos en 1 para omitir el encabezado
+          const cells = rows[i].getElementsByTagName('td');
+          const codeCell = cells[2]; // Código es la tercera columna (índice 2)
+          const productCell = cells[3]; // Producto es la cuarta columna (índice 3)
+  
+          // Verificar si el filtro coincide con el código o el nombre del producto
+          const found = (codeCell && codeCell.textContent.toLowerCase().includes(filter)) ||
+                        (productCell && productCell.textContent.toLowerCase().includes(filter));
+  
+          // Muestra u oculta la fila
+          rows[i].style.display = found ? '' : 'none';
+      }
+  }
+  </script>  
+{% endblock %}

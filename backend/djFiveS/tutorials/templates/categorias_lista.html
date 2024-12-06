@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid" style="margin-top: 10%;">
+  <div class="row">
+    <div class="col-md-3">
+      <!-- Menú lateral -->
+      {% block menu %}
+      {% include 'menu.html' %}
+      {% endblock %}
+    </div>
+    <div class="col-md-9" style="margin-top: -80px; margin-bottom: 20px;">
+      <div class="mb-3">
+        <a href="{% url 'categoria_create' %}" class="btn btn-primary btn-flat">
+          <i class="bi bi-plus"></i> Nuevo Registro
+        </a>
+      </div>
+      <!-- Contenido principal -->
+      <div class="card card-default" style="margin-top: 10px;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="bi bi-tags"></i>
+            {{ title }}
+          </h3>
+        </div>
+        <div class="card-body">
+          <!-- Contenedor de la tabla con barra deslizadora -->
+          <div style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Nro</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for c in categoria %}
+                <tr>
+                  <td>{{ c.id }}</td>
+                  <td>{{ c.nombre }}</td>
+                  <td>
+                    <a href="{% url 'categoria_update' pk=c.id %}" class="btn btn-warning btn-xs">
+                      <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <a href="{% url 'categoria_detail' pk=c.id %}" class="btn btn-success btn-xs">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{% url 'categoria_delete' pk=c.id %}" class="btn btn-danger btn-xs">
+                      <i class="bi bi-trash"></i>  
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

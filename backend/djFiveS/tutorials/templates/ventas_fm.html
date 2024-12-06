@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container-fluid">
+  <!-- Modal para mostrar mensajes de error de stock -->
+  <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error de Stock</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p id="errorMessage">No hay suficiente stock para el producto seleccionado.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      {% block menu %}
+      {% include 'menu.html' %}
+      {% endblock %}
+    </div>
+    <div class="col-md-9" style="margin-top: 10px; margin-bottom:4%;">
+      <div class="card" style="margin-top: -50px;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="bi bi-cart"></i> Nuevo Registro de Venta
+          </h3>
+        </div>
+        <div class="card-body">
+          <form method="post" action="{% url 'venta_create' %}">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="fecha" class="form-label">Fecha de Registro:</label>
+                  <input type="date" class="form-control" id="fecha" name="fecha" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="cliente" class="form-label">Cliente:</label>
+                  <select id="cliente" name="cliente" class="form-control rounded">
+                    {% for cliente in clientes %}
+                      <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="productSearch" class="form-label">Buscar Producto:</label>
+              <input type="text" id="productSearch" class="form-control" placeholder="Buscar por código o nombre...">
+              <ul id="productResults" class="list-group mt-2" style="max-height: 200px; overflow-y: auto; display: none;">
+                {% for almacen in almacenes %}
+                    <option value="{{ almacen.producto.id }}" 
+                            data-codigo="{{ almacen.producto.cod }}"
+                            data-nombre="{{ almacen.producto.nombre }}"
+                            data-categoria="{{ almacen.producto.categoria.nombre }}"
+                            data-preciov="{{ almacen.preciov }}"
+                            data-stock="{{ almacen.cantidad }}">  <!-- Asegúrate de tener el stock disponible -->
+                        {{ almacen.producto.nombre }}
+                    </option>
+                {% empty %}
+                    <option value="">No hay productos disponibles</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="glosa" class="form-label">Glosa:</label>
+              <input type="text" class="form-control" id="glosa" name="glosa" required>
+            </div>
+
+            <!-- Mensaje de advertencia de stock -->
+            <div class="alert alert-danger" id="stockWarning" style="display: none;" role="alert">
+              No hay stock suficiente para el producto seleccionado.
+            </div>
+
+            <!-- Tipo de Pago y Modal QR -->
+            <div class="mb-3">
+              <label for="tipo_pago" class="form-label">Tipo de Pago:</label>
+              <select id="tipo_pago" name="tipo_pago" class="form-control rounded">
+                <option value="efectivo">Efectivo</option>
+                <option value="qr">QR</option>
+              </select>
+            </div>
+
+            <!-- Modal para la imagen del QR -->
+            <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="qrModalLabel">Código QR</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body text-center">
+                    <img id="qrModalImage" src="{{ request.session.qr_image_url|default:'/static/img/QR.jpg' }}" alt="QR Code" class="img-fluid">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <table id="tabla-productos" class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Categoría</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Precio Venta</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-productos-body">
+                  <!-- Aquí se llenarán dinámicamente los datos -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mb-3">
+              <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Guardar Registro</button>
+              <a href="{% url 'venta_lista' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    console.log("DOM completamente cargado y parseado");
+
+    // Lista de productos cargada desde el backend con precio de venta ya formateado en dos decimales
+    const almacenProductos = [
+      {% for almacen in almacenes %}
+        {
+          id: "{{ almacen.producto.id }}",
+          codigo: "{{ almacen.producto.cod }}",
+          nombre: "{{ almacen.producto.nombre }}",
+          categoria: "{{ almacen.producto.categoria.nombre }}",
+          preciov: "{{ almacen.preciov}}",  // Precio con dos decimales como string
+          stock: "{{ almacen.cantidad }}"
+        }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ];
+
+    const productSearch = document.getElementById('productSearch');
+    const productResults = document.getElementById('productResults');
+
+    // Filtrar y mostrar productos en tiempo real
+    productSearch.addEventListener('input', function() {
+      const filter = this.value.toLowerCase();
+      productResults.innerHTML = ''; // Limpiar resultados previos
+      let hasMatches = false;
+
+      // Filtrar productos y mostrar coincidencias
+      almacenProductos.forEach(producto => {
+        if (producto.codigo.toLowerCase().includes(filter) || producto.nombre.toLowerCase().includes(filter)) {
+          const item = document.createElement('li');
+          item.className = 'list-group-item list-group-item-action';
+          item.textContent = `${producto.codigo} - ${producto.nombre}`;
+          item.onclick = function() { selectProduct(producto); };
+          productResults.appendChild(item);
+          hasMatches = true;
+        }
+      });
+
+      productResults.style.display = hasMatches ? 'block' : 'none';
+    });
+
+    // Seleccionar producto y agregar a la tabla con su precio de venta
+    function selectProduct(producto) {
+      const { codigo, nombre, categoria, preciov, stock } = producto;
+      if (parseInt(stock) < 1) {
+        mostrarErrorStock(`No hay suficiente stock para el producto "${nombre}".`);
+        return;
+      }
+
+      const tablaProductosBody = document.getElementById('tabla-productos-body');
+      const newRow = `
+        <tr>
+          <td>${codigo}</td>
+          <td>${nombre}</td>
+          <td>${categoria}</td>
+          <td><input type="number" class="form-control cantidad" name="cantidad[]" value="1" min="1" max="${stock}"></td>
+          <td class="preciov">${preciov} Bs</td> <!-- Precio como string con dos decimales -->
+          <td class="total">${preciov} Bs</td> <!-- Total inicial -->
+          <td><button type="button" class="btn btn-danger btn-sm eliminar">Eliminar</button></td>
+          <input type="hidden" name="preciov[]" value="${preciov}"> <!-- Campo oculto para el precio -->
+          <input type="hidden" name="productos[]" value="${producto.id}"> <!-- ID del producto -->
+        </tr>
+      `;
+      tablaProductosBody.insertAdjacentHTML('beforeend', newRow);
+
+      productSearch.value = '';
+      productResults.style.display = 'none';
+
+      addEventListenersToTable();
+    }
+
+    // Agregar eventos a los elementos de la tabla para manejar cantidad y total
+    function addEventListenersToTable() {
+      document.querySelectorAll('.cantidad').forEach(function (input) {
+      input.addEventListener('input', function () {
+      const cantidad = parseFloat(this.value.replace(',', '.')) || 0;  // Convierte coma a punto y maneja decimales en cantidad
+      const maxStock = parseInt(this.getAttribute('max'));
+
+      // Obtener la fila actual y el precio de venta como decimal
+      const fila = this.closest('tr');
+      const PrecioVenta = parseFloat(fila.querySelector('.preciov').textContent.replace(' Bs', '').trim().replace(',', '.')) || 0;
+      const selectedProductName = fila.querySelector('td:nth-child(2)').textContent;
+      const totalCell = fila.querySelector('.total'); // Seleccionar la celda donde se mostrará el total
+
+      // Validar la cantidad contra el stock máximo
+      if (cantidad > maxStock) {
+        mostrarErrorStock(`No hay suficiente stock para el producto "${selectedProductName}".`);
+        this.value = maxStock;
+      } else {
+        // Calcula el total correctamente usando precio y cantidad con decimales
+        const total = PrecioVenta * cantidad;
+        totalCell.textContent = total.toFixed(2).replace('.', ',') + ' Bs'; // Formatea el total a dos decimales y lo muestra en la celda
+      }
+     });
+    });
+      document.querySelectorAll('.eliminar').forEach(function (button) {
+        button.addEventListener('click', function () {
+          this.closest('tr').remove();
+        });
+      });
+    }
+
+    // Función para mostrar error si stock es insuficiente
+    window.mostrarErrorStock = function(mensaje) {
+      const errorMessageElement = document.getElementById('errorMessage');
+      if (!errorMessageElement) return;
+
+      errorMessageElement.textContent = mensaje;
+      const errorModalElement = document.getElementById('errorModal');
+      if (!errorModalElement) return;
+
+      const errorModal = new bootstrap.Modal(errorModalElement);
+      errorModal.show();
+    };
+
+    // Manejar cambio en el tipo de pago
+    const tipoPagoSelect = document.getElementById('tipo_pago');
+    if (!tipoPagoSelect) {
+      console.error("No se encontró el elemento select de tipo de pago en el DOM.");
+      return;
+    }
+
+    tipoPagoSelect.addEventListener('change', function () {
+      const selectedValue = this.value;
+      if (selectedValue === 'qr') {
+        console.log("Mostrando el modal de QR");
+        const qrModalElement = document.getElementById('qrModal');
+        if (qrModalElement) {
+          const qrModal = new bootstrap.Modal(qrModalElement);
+          qrModal.show();
+        } else {
+          console.error("No se encontró el elemento del modal de QR en el DOM.");
+        }
+      }
+    });
+  });
+
+</script>
+
+
+{% endblock %}

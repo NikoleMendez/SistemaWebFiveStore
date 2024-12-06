@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-default">
+    <div class="card-header">
+        <h3 class="card-title">
+            {% if almacen.id %}
+                <i class="bi bi-pencil"></i> Actualizar Almacén
+            {% else %}
+                <i class="bi bi-plus"></i> Crear Nuevo Almacén
+            {% endif %}
+        </h3>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{% if almacen.id %}{% url 'almacen_update' almacen.id %}{% else %}{% url 'almacen_create' %}{% endif %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="fecha" class="form-label">Fecha:</label>
+                <input type="date" class="form-control" id="fecha" name="fecha" value="{{ almacen.fecha }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="producto" class="form-label">Producto:</label>
+                <select id="producto" name="producto" class="form-select">
+                    {% for producto in productos %}
+                        <option value="{{ producto.id }}" {% if almacen.producto_id == producto.id %} selected {% endif %}>{{ producto.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="categoria" class="form-label">Categoría:</label>
+                <select id="categoria" name="categoria" class="form-select">
+                    {% for categoria in categorias %}
+                        <option value="{{ categoria.id }}" {% if almacen.categoria_id == categoria.id %} selected {% endif %}>{{ categoria.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Mostrar la cantidad seleccionada -->
+            <div class="mb-3">
+                <label for="cantidad" class="form-label">Cantidad:</label>
+                <input type="number" class="form-control" id="cantidad" name="cantidad" value="0">
+            </div>
+            
+            <div class="mb-3">
+                <label for="precioc" class="form-label">Precio Compra:</label>
+                <input type="text" class="form-control" id="precioc" name="precioc" value="0" required>
+            </div>
+            <div class="mb-3">
+                <label for="preciov" class="form-label">Precio Venta:</label>
+                <input type="text" class="form-control" id="preciov" name="preciov" value="0" required>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar</button>
+            <a href="{% url 'almacen_lista' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

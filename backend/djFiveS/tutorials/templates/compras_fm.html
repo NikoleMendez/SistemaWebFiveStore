@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3">
+      {% block menu %}
+      {% include 'menu.html' %}
+      {% endblock %}
+    </div>
+    <div class="col-md-10" style="margin-top: 10px; margin-left: 20%; margin-bottom: 4%;">
+      <div class="card" style="margin-top: -50px;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="bi bi-cart"></i> Nuevo Registro de Compra
+          </h3>
+        </div>
+        <div class="card-body">
+          <form method="post" action="{% url 'compra_create' %}">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="fecha_registro" class="form-label">Fecha de Registro:</label>
+                  <input type="date" class="form-control" id="fecha_registro" name="fecha_registro" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="proveedor" class="form-label">Proveedor:</label>
+                  <select id="proveedor" name="proveedor" class="form-control rounded">
+                    {% for proveedor in proveedores %}
+                      <option value="{{ proveedor.id }}">{{ proveedor.nombre }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="productos" class="form-label">Búsqueda de Productos:</label>
+              <select id="productos" name="productos" class="form-control rounded select2">
+                <option value="">Seleccione un producto</option>
+                {% for producto in productos %}
+                  <option value="{{ producto.id }}"
+                          data-codigo="{{ producto.cod }}" 
+                          data-nombre="{{ producto.nombre }}"
+                          data-categoria="{{ producto.categoria.nombre }}">
+                    {{ producto.nombre }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <table id="tabla-productos" class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Categoría</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Precio Compra</th>
+                    <th scope="col">Precio Venta</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-productos-body">
+                  <!-- Aquí se llenarán dinámicamente los datos -->
+                </tbody>
+              </table>
+            </div>
+            <div class="mb-3">
+              <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Guardar Registro</button>
+              <a href="{% url 'compra_lista' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="error-message" class="alert alert-danger d-none" role="alert">
+  Error: No se pudo cargar el producto.
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var productIndex = 0;  // Índice para cada fila de producto
+    var productosAgregados = new Set(); // Para controlar los productos ya agregados
+
+    document.getElementById('productos').addEventListener('change', function() {
+      var selectedProductOption = this.options[this.selectedIndex];
+      if (selectedProductOption.value === "" || productosAgregados.has(selectedProductOption.value)) {
+        return; // No hacer nada si no hay selección o si ya está agregado
+      }
+
+      var selectedProductCode = selectedProductOption.getAttribute('data-codigo');
+      var selectedProductName = selectedProductOption.getAttribute('data-nombre');
+      var selectedProductCategory = selectedProductOption.getAttribute('data-categoria');
+
+      // Añadir una fila con índice único
+      document.getElementById('tabla-productos-body').innerHTML += `
+        <tr>
+          <td>${selectedProductCode}</td> <!-- Mostrar el código aquí -->
+          <td>${selectedProductName}</td>
+          <td>${selectedProductCategory}</td>
+          <td><input type="number" class="form-control cantidad-input" name="cantidad_${productIndex}" value="1" min="1"></td>
+          <td><input type="number" class="form-control precio-compra-input" name="precio_compra_${productIndex}" value="0" min="0" step="0.01"></td>
+          <td><input type="number" class="form-control precio-venta-input" name="precio_venta_${productIndex}" value="0" min="0" step="0.01" readonly></td>
+          <td class="total-cell">0.00 Bs</td>
+          <td><button type="button" class="btn btn-danger btn-sm delete-row">Eliminar</button></td>
+          <input type="hidden" name="producto_${productIndex}" value="${selectedProductOption.value}">
+        </tr>
+      `;
+
+      // Marcar el producto como agregado
+      productosAgregados.add(selectedProductOption.value);
+      productIndex++;
+
+      // Limpiar el campo de selección
+      this.selectedIndex = 0; // Seleccionar el primer elemento de la lista
+
+      // Escucha el evento de eliminar en la tabla
+      document.getElementById('tabla-productos-body').addEventListener('click', function(event) {
+        if (event.target.classList.contains('delete-row')) {
+          var fila = event.target.closest('tr');
+          var productoId = fila.querySelector('input[type="hidden"]').value;
+          productosAgregados.delete(productoId); // Remover el producto de la lista de agregados
+          fila.remove(); // Elimina la fila de la tabla
+        }
+      });
+
+      // Calcular total al cambiar cantidad o precio de compra
+      document.getElementById('tabla-productos-body').addEventListener('input', function(event) {
+        if (event.target.classList.contains('cantidad-input') || event.target.classList.contains('precio-compra-input')) {
+          var fila = event.target.closest('tr');
+          var cantidadInput = fila.querySelector('.cantidad-input');
+          var precioCompraInput = fila.querySelector('.precio-compra-input');
+          var precioVentaInput = fila.querySelector('.precio-venta-input');
+          var totalCell = fila.querySelector('.total-cell');
+
+          var cantidad = parseInt(cantidadInput.value);
+          var precioCompra = parseFloat(precioCompraInput.value);
+
+          if (!isNaN(cantidad) && !isNaN(precioCompra)) {
+            var precioVenta = precioCompra * 1.30;
+            precioVentaInput.value = precioVenta.toFixed(2);
+
+            var total = precioCompra * cantidad;
+            totalCell.textContent = total.toFixed(2) + ' Bs';
+          } else {
+            totalCell.textContent = '0.00 Bs';
+          }
+        }
+      });
+    });
+  });
+</script>
+
+{% endblock %}

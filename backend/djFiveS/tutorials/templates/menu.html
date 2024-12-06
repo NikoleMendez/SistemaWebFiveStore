@@ -1,0 +1,79 @@
+{% load static %}
+<header id="header" class="header d-flex flex-column align-items-center" style="background-color: #000; padding: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.2); height: 100vh;">
+
+    <div class="profile-img text-center mb-4">
+        <img src="{% static 'img/cinta.jpg' %}" alt="" class="img-fluid rounded-circle" style="width: 100px; height: 100px; border: 2px solid white;">
+    </div>
+
+    <a href="{% url 'home' %}" class="logo d-flex flex-column align-items-center justify-content-center" style="text-decoration: none; color: white; text-align: center;">
+        <h1 class="sitename" style="font-size: 2rem; margin-top: -15%; letter-spacing: 1px;">Five Store</h1>
+    </a>
+
+    <nav id="navmenu" class="navmenu mt-3" style="width: 100%; overflow: hidden; margin-top: -20px;">
+        <ul style="list-style: none; padding: 0; text-align: left;">
+            {% if modulos.modulo_administracion %}
+            <li {% if request.path == '/adm/' %}class="active"{% endif %} style="margin-bottom: 1rem;">
+                <a href="{% url 'modulo_administracion' %}" class="nav-link d-flex align-items-center {% if request.path == '/adm/' %}active{% endif %}" style="padding: 1rem; text-decoration: none; color: white; border-radius: 8px; background-color: rgba(255, 255, 255, 0.1); transition: background-color 0.3s, transform 0.3s;">
+                    <img src="{% static 'img/gerente.png' %}" alt="Administración" class="navicon" style="width: 2rem; margin-right: 1rem;">
+                    <span>Administración</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% if modulos.modulo_compra %}
+            <li {% if request.path == '/compra/' %}class="active"{% endif %} style="margin-bottom: 1rem;">
+                <a href="{% url 'modulo_compra' %}" class="nav-link d-flex align-items-center {% if request.path == '/compra/' %}active{% endif %}" style="padding: 1rem; text-decoration: none; color: white; border-radius: 8px; background-color: rgba(255, 255, 255, 0.1); transition: background-color 0.3s, transform 0.3s;">
+                    <img src="{% static 'img/agregarproducto.png' %}" alt="Compra" class="navicon" style="width: 2rem; margin-right: 1rem;">
+                    <span>Compra</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% if modulos.modulo_venta %}
+            <li {% if request.path == '/venta/' %}class="active"{% endif %} style="margin-bottom: 1rem;">
+                <a href="{% url 'modulo_venta' %}" class="nav-link d-flex align-items-center {% if request.path == '/venta/' %}active{% endif %}" style="padding: 1rem; text-decoration: none; color: white; border-radius: 8px; background-color: rgba(255, 255, 255, 0.1); transition: background-color 0.3s, transform 0.3s;">
+                    <img src="{% static 'img/venta.png' %}" alt="Venta" class="navicon" style="width: 2rem; margin-right: 1rem;">
+                    <span>Venta</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% if modulos.modulo_stock %}
+            <li {% if request.path == '/stock/' %}class="active"{% endif %} style="margin-bottom: 1rem;">
+                <a href="{% url 'modulo_stock' %}" class="nav-link d-flex align-items-center {% if request.path == '/stock/' %}active{% endif %}" style="padding: 1rem; text-decoration: none; color: white; border-radius: 8px; background-color: rgba(255, 255, 255, 0.1); transition: background-color 0.3s, transform 0.3s;">
+                    <img src="{% static 'img/almacenes.png' %}" alt="Almacén" class="navicon" style="width: 2rem; margin-right: 1rem;">
+                    <span>Almacén</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% if modulos.modulo_informe %}
+            <li {% if request.path == '/informe/' %}class="active"{% endif %} style="margin-bottom: 1rem;">
+                <a href="{% url 'modulo_informe' %}" class="nav-link d-flex align-items-center {% if request.path == '/informe/' %}active{% endif %}" style="padding: 1rem; text-decoration: none; color: white; border-radius: 8px; background-color: rgba(255, 255, 255, 0.1); transition: background-color 0.3s, transform 0.3s;">
+                    <img src="{% static 'img/informe.png' %}" alt="Informes" class="navicon" style="width: 2rem; margin-right: 1rem;">
+                    <span>Informes</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+</header>
+
+<style>
+    /* Efecto hover para iluminar los módulos con color azul claro */
+    .nav-link:hover {
+        background-color: #00aaff; /* Color azul claro */
+        box-shadow: 0 6px 12px rgba(0, 170, 255, 0.4); /* Sombra más notoria */
+        transform: scale(1.05); /* Leve aumento de tamaño */
+        color: white; /* Asegura que el texto sea visible */
+    }
+
+    /* Efecto cuando se hace clic y se queda iluminado */
+    .nav-link.active {
+        background-color: #00aaff; /* Color azul claro */
+        box-shadow: 0 6px 12px rgba(0, 170, 255, 0.4); /* Mantiene la sombra */
+        transform: scale(1.05); /* Mantiene el tamaño */
+        color: white; /* Asegura que el texto sea visible */
+    }
+</style>

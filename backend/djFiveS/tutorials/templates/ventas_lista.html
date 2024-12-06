@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3">
+      <!-- Menú lateral -->
+      {% block menu %}
+      {% include 'menu.html' %}
+      {% endblock %}
+    </div>
+    <div class="col-md-10" style="margin-top: -100px; margin-bottom: 3%; margin-left: 22%;">
+        <div class="mb-3" style="margin-top: 60px; margin-bottom: -10px;"> <!-- Aumentamos margin-top -->
+            <a href="{% url 'venta_create' %}" class="btn btn-primary btn-flat">
+                <i class="bi bi-plus"></i> Nuevo Registro
+            </a>
+        </div>
+      <!-- Contenido principal -->
+      <div class="card card-default" style="margin-top: 2%;">
+        <div class="card-header">
+            <h3 class="card-title" style="margin-bottom: 1px;">
+                <i class="bi bi-cart-check"></i>
+                {{ title }}
+            </h3>
+        </div>
+
+        <!-- Contenedor de la tabla con altura máxima para 10 productos -->
+        <div class="card-body" style="max-height: 500px; overflow-y: auto;"> <!-- Ajustar max-height según el tamaño de la fila -->
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Nro</th>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Cliente</th>
+                        <th scope="col">Producto</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for venta in ventas %}
+                    <tr>
+                        <td>{{ venta.id }}</td>
+                        <td>{{ venta.fecha }}</td>
+                        <td>{{ venta.cliente.nombre }}</td>
+                        <td>
+                            {% for detalle in venta.detalles.all %}
+                                {{ detalle.producto.nombre }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for detalle in venta.detalles.all %}
+                                {{ detalle.total }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %} Bs
+                        </td>
+                        <td>
+                            <a href="{% url 'venta_delete' pk=venta.id %}" class="btn btn-danger btn-xs">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                            <a href="{% url 'venta_detail' pk=venta.id %}" class="btn btn-success btn-xs">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

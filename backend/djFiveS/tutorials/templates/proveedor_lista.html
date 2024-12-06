@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid" style="margin-top: 10%;">
+  <div class="row">
+    <div class="col-md-3">
+      <!-- Menú lateral -->
+      {% block menu %}
+      {% include 'menu.html' %}
+      {% endblock %}
+    </div>
+    <div class="col-md-11" style="margin-top: -80px; margin-bottom: 20px; margin-left: 18%;">
+      <a href="{% url 'proveedor_create' %}" class="btn btn-primary btn-flat">
+        <i class="bi bi-plus"></i> Nuevo Registro
+      </a>
+      <!-- Contenido principal -->
+      <div class="card card-default" style="margin-top: 10px;">
+          <div class="card-header">
+              <h3 class="card-title">
+                  <i class="bi bi-people"></i>
+                  {{ title }}
+              </h3>
+          </div>
+          <div class="card-body">
+              <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">Nro</th>
+                      <th scope="col">Nombre</th>
+                      <th scope="col">Telefono</th>
+                      <th scope="col">Direccion</th>
+                      <th scope="col">Correo</th>
+                      <th scope="col">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for c in proveedor %}
+                    <tr>
+                      <td>{{ c.id }}</td>
+                      <td>{{ c.nombre }}</td>
+                      <td>{{ c.telefono }}</td>
+                      <td>{{ c.direccion }}</td>
+                      <td>{{ c.email }}</td>
+                      <td>
+
+                        <a href="{% url 'proveedor_update' pk=c.id %}" class="btn btn-warning btn-xs">
+                          <i class="bi bi-pencil-square"></i>
+                        
+                        <a href="{% url 'proveedor_delete' pk=c.id %}" class="btn btn-danger btn-xs">
+                          <i class="bi bi-trash"></i>
+
+                        <a href="{% url 'proveedor_detail' pk=c.id %}" class="btn btn-success btn-xs">
+                          <i class="bi bi-eye"></i>
+                        </a>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

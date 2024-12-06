@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card mx-auto shadow-sm border-10" style="max-width: 600px; margin-top: -3%;">
+        <div class="card-header bg-success text-white text-center">
+            <h3 class="card-title mb-0 text-white">
+                {% if cliente.id %}
+                    <i class="bi bi-pencil"></i> Actualizar Cliente
+                {% else %}
+                    <i class="bi bi-person"></i> Crear Nuevo Cliente
+                {% endif %}
+            </h3>
+        </div>
+        <div class="card-body p-4">
+            <form method="post" action="{% if cliente.id %}{% url 'cliente_update' cliente.id %}{% else %}{% url 'cliente_create' %}{% endif %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    <div class="input-group">
+                        <div class="input-group-text"><i class="bi bi-person"></i></div>
+                        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ cliente.nombre }}" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="telefono" class="form-label">Teléfono:</label>
+                    <div class="input-group">
+                        <div class="input-group-text"><i class="bi bi-telephone"></i></div>
+                        <input type="text" class="form-control" id="telefono" name="telefono" value="{{ cliente.telefono }}" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="direccion" class="form-label">Dirección:</label>
+                    <div class="input-group">
+                        <div class="input-group-text"><i class="bi bi-geo-alt"></i></div>
+                        <input type="text" class="form-control" id="direccion" name="direccion" value="{{ cliente.direccion }}" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <div class="input-group">
+                        <div class="input-group-text"><i class="bi bi-envelope"></i></div>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ cliente.email }}" required>
+                    </div>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-success me-md-2" style="margin-right: 3px;"><i class="bi bi-save"></i> Guardar</button>
+                    <a href="{% url 'cliente_lista' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

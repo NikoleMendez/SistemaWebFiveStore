@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-default">
+    <div class="card-header">
+        <h3 class="card-title">
+            {{ rol.rol }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <p><strong>Nombre:</strong> {{ rol.nombre }}</p>
+        <p><strong>Descripcion:</strong> {{ rol.descripcion }}</p>
+        <a href="{% url 'rol_lista' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver a la lista</a>
+    </div>
+</div>
+{% endblock %}

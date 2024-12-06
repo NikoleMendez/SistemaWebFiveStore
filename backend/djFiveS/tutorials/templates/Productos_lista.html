@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid" style="margin-top: 10%;">
+  <div class="row">
+    <div class="col-md-3">
+      <!-- Menú lateral -->
+      {% block menu %}
+      {% include 'menu.html' %}
+      {% endblock %}
+    </div>
+    <div class="col-md-10" style="margin-top: -80px; margin-bottom: 20px; margin-left: 23%;">
+        <div class="mb-3">
+            <a href="{% url 'producto_create' %}" class="btn btn-primary btn-flat">
+                <i class="bi bi-plus"></i> Nuevo Registro
+            </a>
+        </div>
+      <!-- Contenido principal -->
+      <div class="card card-default" style="margin-top: 10px;">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="bi bi-search"></i>
+                {{ title }}
+            </h3>
+        </div>
+    
+        <!-- Contenedor de la tabla con barra deslizadora para más de 10 productos -->
+        <div class="card-body" style="max-height: 500px; overflow-y: auto;"> <!-- Ajustar max-height según el tamaño de las filas -->
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Nro</th>
+                        <th scope="col">Código</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Categoria</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for c in producto %}
+                    <tr>
+                        <td>{{ c.id }}</td>
+                        <td>{{ c.cod }}</td>
+                        <td>{{ c.nombre }}</td>
+                        <td>{{ c.categoria.nombre }}</td>
+                        <td>{{ c.descripcion }}</td>
+                        <td>
+                            <a href="{% url 'producto_update' pk=c.id %}" class="btn btn-warning btn-xs">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a href="{% url 'producto_detail' pk=c.id %}" class="btn btn-success btn-xs">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'producto_delete' pk=c.id %}" class="btn btn-danger btn-xs">
+                                <i class="bi bi-trash"></i>  
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

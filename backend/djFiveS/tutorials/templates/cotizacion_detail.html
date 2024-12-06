@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-default" style="margin-top: 2%;">
+    <div class="card-header">
+        <h3 class="card-title">
+           Cotizacion de {{ cotizacion.fecha }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <p><strong>Fecha:</strong> {{ cotizacion.fecha }}</p>
+        <p><strong>Cliente:</strong> {{ cotizacion.cliente.nombre }}</p>
+        <p><strong>Cotizacion:</strong> {{ cotizacion.cotizacion }}</p>
+
+        <p><strong>Producto:</strong> {{ cotizacion.producto.nombre }}</p>
+        <p><strong>Categoría:</strong> {{ cotizacion.producto.categoria.nombre }}</p>
+        <p><strong>Cantidad:</strong> {{ cotizacion.cantidad }}</p>
+        <p><strong>Precio Venta:</strong> {{ cotizacion.preciov }}</p>  <!-- Usamos la variable del contexto -->
+        <p><strong>Total:</strong> {{ cotizacion.total }}</p>
+        
+        <a href="{% url 'cotizacion_lista' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver a la lista</a>
+        <a href="{% url 'cotizacion_pdf' pk=cotizacion.pk %}" class="btn btn-primary"><i class="bi bi-file-pdf"></i> Generar PDF</a>
+    </div>
+</div>
+{% endblock %}

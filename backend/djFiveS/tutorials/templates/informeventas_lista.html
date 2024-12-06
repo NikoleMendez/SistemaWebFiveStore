@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid" style="margin-top: 10%; margin-bottom: 4%;">
+  <div class="row">
+    <div class="col-md-3">
+      <!-- Menú lateral -->
+      {% block menu %}
+      {% include 'menu.html' %}
+      {% endblock %}
+    </div>
+
+    <div class="col-md-9">
+      <!-- Formulario para buscar por rango de fechas -->
+      <div class="card-body" style="margin-bottom: 10px; margin-top: -12%; margin-left: -3%;">
+        <form method="GET" action="">
+            <div class="form-row">
+                <div class="col-md-5">
+                    <label for="fecha_inicio">Fecha Inicio:</label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" value="{{ request.GET.fecha_inicio }}">
+                </div>
+                <div class="col-md-5">
+                    <label for="fecha_fin">Fecha Fin:</label>
+                    <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" value="{{ request.GET.fecha_fin }}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end" style="margin-top: 10px; "> <!-- Usar d-flex para alinear los botones -->
+                    <button type="submit" class="btn btn-primary btn-sm w-100" style="padding: 8px; margin-right: 3px;">Buscar</button> <!-- Añadir me-1 para margen derecho -->
+                    <a href="{% url request.resolver_match.url_name %}" class="btn btn-secondary btn-sm w-100" style="padding: 8px;">Todo</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+      <!-- Botones de Crear Excel y Crear PDF -->
+      <div class="container-fluid" style="margin-bottom: 20px; margin-left: -2%;">
+        <div class="btn-group" role="group" style="margin-top: -10px;">
+            <a href="{% url 'venta_excel' %}?fecha_inicio={{ request.GET.fecha_inicio }}&fecha_fin={{ request.GET.fecha_fin }}" class="btn btn-success btn-flat">
+                <i class="bi bi-file-earmark-spreadsheet"></i> Crear Excel
+            </a>
+            <a href="{% url 'venta_pdf' %}?fecha_inicio={{ request.GET.fecha_inicio }}&fecha_fin={{ request.GET.fecha_fin }}" class="btn btn-danger btn-flat">
+                <i class="bi bi-file-earmark-pdf"></i> Crear PDF
+            </a>
+        </div>
+      </div>
+
+      <!-- Contenido principal -->
+       <div class="card card-default" style="margin-top: 10px;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="bi bi-file-earmark-bar-graph"></i>
+            Informe de Ventas
+          </h3>
+       </div>
+
+  <!-- Contenedor para la tabla con scrollbar -->
+  <div class="card-body" style="max-height: 400px; overflow-y: auto;"> <!-- Establece la altura fija y el scroll vertical -->
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Nro</th>
+          <th scope="col">Fecha</th>
+          <th scope="col">Cliente</th>
+          <th scope="col">Producto</th>
+          <th scope="col">Cantidad</th>
+          <th scope="col">Total</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for venta in ventas %}
+        <tr>
+          <td>{{ forloop.counter }}</td> <!-- Muestra el número del registro -->
+          <td>{{ venta.fecha }}</td> <!-- Muestra la fecha de la compra -->
+          <td>{{ venta.cliente.nombre }}</td> <!-- Muestra el nombre del cliente -->
+          <td>{{ venta.producto.nombre }}</td> <!-- Muestra el nombre del producto -->
+          <td>{{ venta.cantidad }}</td>
+          <td>{{ venta.total }}</td> <!-- Muestra el total de la venta -->
+          <td>
+            <a href="{% url 'venta_detail' pk=venta.id %}" class="btn btn-success btn-xs">
+              <i class="bi bi-eye"></i>
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

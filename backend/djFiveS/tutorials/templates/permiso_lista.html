@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid" style="margin-top: 10%;">
+  <div class="row">
+    <div class="col-md-3">
+      <!-- Menú lateral -->
+      {% block menu %}
+      {% include 'menu.html' %}
+      {% endblock %}
+    </div>
+    <div class="col-md-9" style="margin-top: -70px;">
+      <!-- Botón "Nuevo Permiso" arriba de la tabla -->
+      <div class="mb-3">
+        <a href="{% url 'permiso_create' %}" class="btn btn-primary btn-flat">
+          <i class="bi bi-plus"></i> Nuevo Permiso
+        </a>
+      </div>
+      <!-- Contenido principal -->
+      <div class="card card-default" style="margin-top: 15px;">
+          <div class="card-header">
+              <h3 class="card-title">
+                  <i class="bi bi-shield-check"></i> Permisos
+              </h3>
+          </div>
+          <div class="card-body">
+              <!-- Tabla de permisos con margen superior -->
+              <div class="mt-3">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">Nro</th>
+                        <th scope="col">Tipo Permiso</th>
+                        <th scope="col">Administración</th>
+                        <th scope="col">Compra</th>
+                        <th scope="col">Venta</th>
+                        <th scope="col">Stock</th>
+                        <th scope="col">Informes</th>
+                        <th scope="col">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for permiso in permisos %}
+                      <tr>
+                        <td>{{ forloop.revcounter }}</td>
+                        <td>{{ permiso.nombre }}</td>
+                        <td>{% if permiso.modulo_administracion %}✔{% else %}✘{% endif %}</td>
+                        <td>{% if permiso.modulo_compra %}✔{% else %}✘{% endif %}</td>
+                        <td>{% if permiso.modulo_venta %}✔{% else %}✘{% endif %}</td>
+                        <td>{% if permiso.modulo_stock %}✔{% else %}✘{% endif %}</td>
+                        <td>{% if permiso.modulo_informe %}✔{% else %}✘{% endif %}</td>
+                        <td>
+                          <a href="#" class="btn btn-warning btn-xs">
+                            <i class="bi bi-pencil-square"></i>
+                          </a>
+                          <a href="{% url 'permiso_delete' pk=permiso.id %}" class="btn btn-danger btn-xs">
+                            <i class="bi bi-trash"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-default" style="margin-top: 2%;">
+    <div class="card-header">
+        <h3 class="card-title">
+            Detalle Compra de {{ compra.fecha }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <p><strong>Fecha:</strong> {{ compra.fecha }}</p>
+        <p><strong>Proveedor:</strong> {{ compra.proveedor.nombre }}</p>
+
+        <p><strong>Producto:</strong> {{ compra.producto.nombre }}</p>
+        <p><strong>Categoría:</strong> {{ compra.producto.categoria.nombre }}</p>  <!-- Corregido aquí -->
+        <p><strong>Cantidad:</strong> {{ compra.cantidad }}</p>
+        <p><strong>Precio Compra:</strong> {{ compra.precioc }}</p>
+        <p><strong>Total:</strong> {{ compra.total }}</p>
+        
+        <a href="{% url 'compra_lista' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver a la lista</a>
+        <a href="{% url 'compra_pdf' pk=compra.pk %}" class="btn btn-primary"><i class="bi bi-file-pdf"></i> Generar PDF</a>
+    </div>
+</div>
+{% endblock %}

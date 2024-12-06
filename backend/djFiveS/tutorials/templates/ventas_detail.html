@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-default" style="margin-top: -3%; margin-bottom: 3%;">
+    <div class="card-header">
+        <h3 class="card-title" style="margin-bottom: 2px;">
+           Detalle Venta de {{ venta.fecha }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <p><strong>Fecha:</strong> {{ venta.fecha }}</p>
+        <p><strong>Cliente:</strong> {{ venta.cliente.nombre }}</p>
+        <p><strong>Glosa:</strong> {{ venta.glosa }}</p>
+        <p><strong>Tipo Pago:</strong> {{ venta.tipo_pago }}</p>
+
+        <!-- Detalles de los productos vendidos -->
+        {% for detalle in venta.detalles.all %}
+            <p><strong>Producto:</strong> {{ detalle.producto.nombre }}</p>
+            <p><strong>Categoría:</strong> {{ detalle.producto.categoria.nombre }}</p>
+            <p><strong>Cantidad:</strong> {{ detalle.cantidad }}</p>
+            <p><strong>Precio Venta:</strong> {{ detalle.preciov }} Bs</p>
+            <p><strong>Total:</strong> {{ detalle.total }} Bs</p>
+            {% if not forloop.last %}
+                <hr> <!-- Línea divisoria entre productos -->
+            {% endif %}
+        {% endfor %}
+
+        <!-- Mostrar el usuario que realizó la venta -->
+        <p><strong>Usuario venta:</strong> {{ venta.detalles.first.usuario.username }}</p>
+
+        <!-- Botones de acción -->
+        <a href="{% url 'venta_lista' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver a la lista</a>
+        <a href="{% url 'venta_pdf' pk=venta.pk %}" class="btn btn-primary"><i class="bi bi-file-pdf"></i> Generar PDF</a>
+    </div>
+</div>
+{% endblock %}

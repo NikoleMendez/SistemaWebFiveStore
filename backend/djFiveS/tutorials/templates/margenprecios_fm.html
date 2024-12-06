@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card mx-auto shadow-sm border-10" style="max-width: 600px;">
+        <div class="card-header bg-danger text-white text-center">
+            <h3 class="card-title mb-0">
+                {% if producto.id %}
+                    <i class="bi bi-pencil"></i> Actualizar Precio
+                {% else %}
+                    <i class="bi bi-disc-fill"></i> Crear Nuevo Precio
+                {% endif %}
+            </h3>
+        </div>
+        <div class="card-body p-4">
+            <form method="post" action="{% if producto.id %}{% url 'producto_update' producto.id %}{% else %}{% url 'producto_create' %}{% endif %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="codigo" class="form-label">Código:</label>
+                    <div class="input-group">
+                        <div class="input-group-text"><i class="bi bi-upc"></i></div>
+                        <input type="text" class="form-control" id="codigo" name="codigo" value="{{ producto.cod }}" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    <div class="input-group">
+                        <div class="input-group-text"><i class="bi bi-person"></i></div>
+                        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ producto.nombre }}" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="categoria" class="form-label">Categoría:</label>
+                    <select id="categoria" name="categoria" class="form-select">
+                      {% for categoria in categorias %}
+                      <option value="{{ categoria.id }}" {% if producto.categoria.id == categoria.id %}selected{% endif %}>
+                        {{ categoria.nombre }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="descripcion" class="form-label">Descripción:</label>
+                    <div class="input-group">
+                        <div class="input-group-text"><i class="bi bi-card-text"></i></div>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required>{{ producto.descripcion }}</textarea>
+                    </div>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-danger me-md-2"><i class="bi bi-save"></i> Guardar</button>
+                    <a href="{% url 'producto' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

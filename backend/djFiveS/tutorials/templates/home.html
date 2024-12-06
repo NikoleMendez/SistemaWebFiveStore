@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<i class="header-toggle d-xl-none bi bi-list"></i>
+
+<div class="content-wrapper" style="min-height: calc(65vh - 20px);">  <!-- Ajusta la altura según la altura del header -->
+    <div class="content-header">
+        <div class="container">
+            <div class="row align-items-center mb-4">
+                <!-- Ajustar la columna para moverla más a la derecha -->
+                <div class="col-sm-8 offset-sm-3 text-center">
+                    <!-- Tarjeta para el logo y el texto -->
+                    <div class="card shadow border-0" style="background-color: rgba(255, 255, 255, 0.9); border-radius: 15px;">
+                        <div class="card-body">
+                            <img src="{% static 'img/FiveStore.jpg' %}" alt="Logo Five Store" class="img-fluid mb-3" style="max-width: 250px;">
+                            <h2 class="text-dark mb-3" style="font-weight: 600;">Bienvenido a Five Store</h2>
+                            <p class="m-0 text-dark" style="font-size: 1.1rem;">Distribuidora oficial de cintas de embalaje Five Stick</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content">
+        <div class="container">
+            {% block menu %}
+            {% include 'menu.html' %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+</a>
+
+<!-- Preloader -->
+<div id="preloader"></div>
+
+
+<div class="content" style="margin-left: 15%;">
+    <div class="container">
+        {% block footer %}
+        {% include 'footer.html' %}
+        {% endblock %}
+    </div>
+</div>
+
+
+{% endblock %}

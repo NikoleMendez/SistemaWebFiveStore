@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-default">
+    <div class="card-header">
+        <h3 class="card-title">
+            {{ producto.nombre }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <p><strong>Código:</strong> {{ producto.cod }}</p>
+        <p><strong>Nombre:</strong> {{ producto.nombre }}</p>
+        <p><strong>Categoria:</strong> {{ producto.categoria.nombre }}</p>
+        <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+        <a href="{% url 'producto' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver a la lista</a>
+    </div>
+</div>
+{% endblock %}

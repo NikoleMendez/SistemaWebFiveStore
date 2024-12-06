@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card mx-auto shadow-sm border-10" style="max-width: 600px;margin-bottom: 4%; margin-top:-3%;">
+        <div class="card-header bg-success text-white text-center">
+            <h3 class="card-title mb-0 text-white">
+                {% if form.instance.id %}
+                    <i class="bi bi-pencil"></i> Actualizar Permiso
+                {% else %}
+                    <i class="bi bi-shield-plus"></i> Crear Nuevo Permiso
+                {% endif %}
+            </h3>
+        </div>
+        <div class="card-body p-4">
+            <form method="post" action="{% if form.instance.id %}{% url 'permiso_update' form.instance.id %}{% else %}{% url 'permiso_create' %}{% endif %}">
+                {% csrf_token %}
+                
+                <!-- Campo para Tipo Permiso -->
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Tipo Permiso:</label>
+                    <div class="input-group">
+                        <div class="input-group-text"><i class="bi bi-shield-fill-check"></i></div>
+                        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ form.nombre.value|default_if_none:'' }}" required>
+                    </div>
+                </div>
+                
+                <!-- Checkbox para módulos -->
+                <div class="mb-3">
+                    <label class="form-label">Módulos:</label>
+                    <div class="form-check">
+                        {{ form.modulo_administracion }}
+                        <label class="form-check-label" for="id_modulo_administracion">Administración</label>
+                    </div>
+                    <div class="form-check">
+                        {{ form.modulo_compra }}
+                        <label class="form-check-label" for="id_modulo_compra">Compra</label>
+                    </div>
+                    <div class="form-check">
+                        {{ form.modulo_venta }}
+                        <label class="form-check-label" for="id_modulo_venta">Venta</label>
+                    </div>
+                    <div class="form-check">
+                        {{ form.modulo_stock }}
+                        <label class="form-check-label" for="id_modulo_stock">Stock</label>
+                    </div>
+                    <div class="form-check">
+                        {{ form.modulo_informe }}
+                        <label class="form-check-label" for="id_modulo_informe">Informes</label>
+                    </div>
+                </div>
+                
+                <!-- Campo Select para el Rol con diseño de productos -->
+                <div class="mb-3">
+                    <label for="rol" class="form-label">Rol:</label>
+                    <select name="rol" id="rol" class="form-control rounded">
+                        <option value="">Seleccione un rol</option>
+                        {% for rol in roles %}
+                            <option value="{{ rol.id }}" {% if form.instance.rol and form.instance.rol.id == rol.id %}selected{% endif %}>
+                                {{ rol.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <!-- Botones de Acción -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-success me-md-2" style="margin-right: 3px"><i class="bi bi-save"></i> Guardar</button>
+                    <a href="{% url 'permiso_lista' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

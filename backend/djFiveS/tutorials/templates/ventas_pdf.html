@@ -1,0 +1,34 @@
+{% extends 'base2.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header bg-light">
+      <h3 class="card-title mb-0">Detalle de Venta</h3>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Fecha:</strong> {{ fecha }}</p>
+          <p><strong>Cliente:</strong> {{ cliente }}</p>
+          <p><strong>Glosa:</strong> {{ glosa }}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Producto:</strong> {{ producto }}</p>
+          <p><strong>Categoría:</strong> {{ categoria }}</p>
+          <p><strong>Cantidad:</strong> {{ cantidad }}</p>
+          <p><strong>Precio Venta:</strong> {{ precio_venta }}</p>
+          <p><strong>Total:</strong> {{ total }}</p>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="profile-img">
+            <img src="/static/img/cinta.jpg" alt="" class="img-fluid rounded-circle">
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid" style="margin-top: 10%;">
+  <div class="row">
+    <div class="col-md-3">
+      <!-- Menú lateral -->
+      {% block menu %}
+      {% include 'menu.html' %}
+      {% endblock %}
+    </div>
+    <div class="col-md-9" style="margin-top: -70px;">
+      <!-- Botón "Nuevo Rol" arriba de la tabla -->
+      <div class="mb-3">
+        <a href="{% url 'rol_create' %}" class="btn btn-primary btn-flat">
+            <i class="bi bi-plus"></i> Nuevo Rol
+        </a>
+    </div>
+      <!-- Contenido principal -->
+      <div class="card card-default" style="margin-top: 15px;">
+          <div class="card-header">
+              <h3 class="card-title">
+                  <i class="bi bi-ui-checks-grid"></i>
+                  Roles
+              </h3>
+          </div>
+          <div class="card-body">
+              <!-- Tabla de roles -->
+              <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">Nro</th>
+                      <th scope="col">Rol</th>
+                      <th scope="col">Descripcion</th>
+                      <th scope="col">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for c in rol %}
+                    <tr>
+                      <td>{{ c.id }}</td>
+                      <td>{{ c.nombre }}</td>
+                      <td>{{ c.descripcion }}</td>
+                      <td>
+                        <a href="{% url 'rol_update' pk=c.id %}" class="btn btn-warning btn-xs">
+                          <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <a href="{% url 'rol_delete' pk=c.id %}" class="btn btn-danger btn-xs">
+                          <i class="bi bi-trash"></i>
+                        </a>
+                        <a href="{% url 'rol_detail' pk=c.id %}" class="btn btn-success btn-xs">
+                          <i class="bi bi-eye"></i>
+                        </a>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

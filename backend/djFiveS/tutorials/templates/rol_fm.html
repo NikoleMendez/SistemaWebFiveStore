@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-default">
+    <div class="card-header">
+        <h3 class="card-title">
+            {% if rol.id %}
+                <i class="bi bi-pencil"></i> Actualizar Rol
+            {% else %}
+                <i class="bi bi-ui-radios"></i> Crear Nuevo Rol
+            {% endif %}
+        </h3>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{% if rol.id %}{% url 'rol_update' rol.id %}{% else %}{% url 'rol_create' %}{% endif %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre Rol:</label>
+                <div class="input-group">
+                    <div class="input-group-text"><i class="bi bi-card-text"></i></div>
+                    <input type="text" class="form-control" id="nombre" name="nombre" value="{{ rol.nombre }}" required>
+
+                </div>
+            </div>      
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción:</label>
+                <div class="input-group">
+                    <div class="input-group-text"><i class="bi bi-card-text"></i></div>
+                    <input type="text" class="form-control" id="descripcion" name="descripcion" value="{{ rol.descripcion }}" required>
+
+                </div>
+                
+            </div>
+            <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Guardar</button>
+            <a href="{% url 'rol_lista' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

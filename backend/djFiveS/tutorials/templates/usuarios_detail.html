@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-default">
+    <div class="card-header">
+        <h3 class="card-title">
+            Detalles del Usuario: {{ usuario.username }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <p><strong>Nombre de usuario:</strong> {{ usuario.username }}</p>
+        <p><strong>Rol:</strong> {{ usuario.rol.nombre }}</p>
+        <!--<p><strong>Contraseña:</strong> {{ usuario.password }}</p>-->
+        <a href="{% url 'usuarios' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver a la lista</a>
+    </div>
+</div>
+{% endblock %}

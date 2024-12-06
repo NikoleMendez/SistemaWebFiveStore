@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-default">
+    <div class="card-header">
+        <h3 class="card-title">
+            Cliente: {{ cliente.nombre }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <p><strong>Nombre:</strong> {{ cliente.nombre }}</p>
+        <p><strong>Telefono:</strong> {{ cliente.telefono }}</p>
+        <p><strong>Direccion:</strong> {{ cliente.direccion }}</p>
+        <p><strong>Email:</strong> {{ cliente.email }}</p>
+        <a href="{% url 'cliente_lista' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver a la lista</a>
+    </div>
+</div>
+{% endblock %}

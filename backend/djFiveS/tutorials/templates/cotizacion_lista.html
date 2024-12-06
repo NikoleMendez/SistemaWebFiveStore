@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid" style="margin-top: 10%;">
+  <div class="row">
+    <div class="col-md-3">
+      <!-- Menú lateral -->
+      {% block menu %}
+      {% include 'menu.html' %}
+      {% endblock %}
+    </div>
+    <div class="col-md-9" style="margin-top: -70px; margin-bottom: 4%;">
+      <div class="mb-3">
+        <a href="{% url 'cotizacion_create' %}" class="btn btn-primary btn-flat">
+          <i class="bi bi-plus"></i> Nueva Cotizacion
+        </a>
+      </div>
+      <!-- Contenido principal -->
+      <div class="card card-default" style="margin-top: 10px;">
+          <div class="card-header">
+              <h3 class="card-title">
+                  <i class="bi bi-cash"></i>
+                  Cotizaciones
+              </h3>
+          </div>
+          <div class="card-body">
+              <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">Nro</th>
+                      <th scope="col">Fecha</th>
+                      <th scope="col">Cliente</th>
+                      <th scope="col">Producto</th>
+                      <th scope="col">Total</th>
+                      <th scope="col">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for c in cotizacion %}
+                    <tr>
+                      <td>{{ c.id }}</td>
+                      <td>{{ c.fecha }}</td>
+                      <td>{{ c.cliente.nombre }}</td>
+                      <td>{{ c.producto.nombre }}</td>
+                      <td>{{ c.total }} Bs</td>
+                      <td>
+                        <a href="{% url 'usuario_delete' pk=c.id %}" class="btn btn-danger btn-xs">
+                          <i class="bi bi-trash"></i>
+                        </a>
+                        <a href="{% url 'cotizacion_detail' pk=c.id %}" class="btn btn-success btn-xs">
+                          <i class="bi bi-eye"></i>
+                        </a>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
